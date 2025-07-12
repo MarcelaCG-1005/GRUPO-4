@@ -1,0 +1,124 @@
+---
+title: "PRACTICA 2-1"
+author: "GRUPO 4"
+format: html
+editor: visual
+---
+
+GRUPO 04\
+- Serrano Ccahuay Maricielo\
+- Marroquin Quispe Diana\
+- Canchari Gutierrez Marcela Mabel\
+- Donayre Castillo Mateo\
+- Enciso Ccorahua Caleb\
+- Bravo Zapata Maria Fernanda\
+- Leyhuacc Cabrera Anders
+
+1.  AJUSTE DE TRABAJO
+
+    ```{r}
+    datos <- read.csv("D:/Documents/Desktop/upsjb_practicaestudio/PRACTICA_CALIFICADA/practica_calificada1-2/Dataset_para_los_estudiantes/bajo_peso.csv")
+
+
+    ```
+
+```{r}
+# Verifica que se cargó correctamente
+head(datos)
+
+# Muestra los nombres de las columnas
+names(datos)
+
+# También puedes ver un resumen del dataset
+str(datos)
+
+
+```
+
+```{r}
+names(datos)  # Muestra los nombres de las columnas
+str(datos)    # Estructura del dataset (tipos de datos)
+summary(datos)  # Resumen estadístico
+View(datos)
+
+```
+
+## Gráficos Descriptivos
+
+Los gráficos descriptivos se utilizan para resumir, explorar y visualizar la distribución y las relaciones de los datos. Son herramientas esenciales para cualquier análisis exploratorio de datos. Los tipos comunes de gráficos descriptivos incluyen:
+
+-   *Gráficos de barras*: útiles para mostrar la frecuencia de categorías.
+-   *Histogramas*: se usan para mostrar la distribución de una variable numérica.
+-   *Diagramas de dispersión*: permiten visualizar la relación entre dos variables numéricas.
+
+### Crear un Gráfico de Barras en R
+
+A continuación, te mostramos cómo crear un gráfico de barras utilizando el paquete ggplot2:
+
+```{r}
+ggplot(datos, aes(x = peso_nacer)) +
+  geom_histogram(binwidth = 100, fill = "skyblue", color = "black") +
+  labs(title = "Distribución del peso al nacer", x = "Peso al nacer (g)", y = "Frecuencia")
+
+```
+
+Gráfico de barras - Madres fumadoras
+
+```{r}
+ggplot(datos, aes(x = fuma)) +
+  geom_bar(fill = "tomato", color = "black") +
+  labs(title = "Frecuencia de madres fumadoras", x = "Fuma", y = "Cantidad")
+
+```
+
+Diagrama de dispersión - Edad materna y peso al nacer
+
+```{r}
+ggplot(datos, aes(x = edad_madre, y = peso_nacer)) +
+  geom_point(color = "purple", alpha = 0.6) +
+  labs(title = "Edad materna vs Peso al nacer", x = "Edad de la madre", y = "Peso al nacer (g)")
+
+```
+
+**CALCULO DE TAMAÑO DE MUESTRA**
+
+```{r}
+install.packages("pwr")  # Solo una vez
+library(pwr)
+
+```
+
+```{r}
+# Parámetros:
+# p = proporción esperada (por ejemplo 0.1 si esperas 10%)
+# d = margen de error tolerado
+# z = valor z para 95% de confianza ≈ 1.96
+
+p <- 0.1       # proporción esperada (10%)
+d <- 0.05      # margen de error (5%)
+z <- 1.96      # 95% de confianza
+
+n <- (z^2 * p * (1 - p)) / d^2
+ceiling(n)  # redondea hacia arriba
+```
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).

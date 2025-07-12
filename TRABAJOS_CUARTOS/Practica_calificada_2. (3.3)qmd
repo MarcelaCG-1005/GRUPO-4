@@ -1,0 +1,176 @@
+---
+title: "Practica calificada 2 3/3"
+author: "GRUPO 4"
+format: html
+editor: visual
+---
+
+GRUPO 04\
+NOMBRES Y APELLIDOS
+
+-   Canchari Gutierrez Marcela
+
+-   Serrano Ccahuay Maricielo
+
+-   Enciso Ccorahua Caleb Rudy
+
+<!-- -->
+
+-   Bravo Zapata Maria Fernanda
+
+-   Donayre Castillo Mateo Jesus
+
+-   Marroquin Quispe Diana Carolina
+
+-    Leyhuacc Cabrera Anderson
+
+    \
+    A. Interpretación de métodos de regresión
+
+```{r}
+
+#CARGAR LOS DATOS
+datos <- read.csv("D:/Documents/Desktop/PRACTICA_CALIFICADA1-2/Dataset_para_los_estudiantes/bajo_peso_limpio.csv")
+
+
+```
+
+```{r}
+#Revisar el contenido del dataset
+str(datos)
+summary(datos)
+
+```
+
+```{r}
+#convertir las variables categóricas en factores
+datos$fuma <- as.factor(datos$fuma)
+datos$hipertension <- as.factor(datos$hipertension)
+datos$irritabilidad_utero <- as.factor(datos$irritabilidad_utero)
+datos$raza <- as.factor(datos$raza)
+
+```
+
+```{r}
+#Ajustar el modelo de regresión lineal
+modelo_lineal <- lm(peso_nacer ~ edad_madre + peso_madre + fuma + hipertension + irritabilidad_utero + raza + visitas_medicas + partos_prematuros, data = datos)
+summary(modelo_lineal)
+
+```
+
+```{r}
+(summary(modelo_lineal)) 
+```
+
+```{r}
+# Gráficos de diagnóstico
+par(mfrow = c(2,2))
+plot(modelo_lineal)
+
+# Normalidad de residuos
+shapiro.test(residuals(modelo_lineal))
+
+# Q-Q Plot
+qqnorm(residuals(modelo_lineal))
+qqline(residuals(modelo_lineal), col = "blue")
+
+```
+
+**Una prueba de bondad de ajuste** y **al menos un método de regresión** distinto.
+
+```{r}
+shapiro.test(residuals(modelo_lineal))
+
+```
+
+```{r}
+datos$bajo_peso <- as.factor(datos$bajo_peso)
+
+
+
+```
+
+-   **R² = 0.2427**\
+    Esto indica que el modelo explica aproximadamente el **24.3% de la variabilidad** en el peso al nacer. Aunque no es un valor alto, es esperable en estudios de este tipo donde influyen múltiples factores biológicos y sociales.
+
+<!-- -->
+
+-    **F-statistic: 6.376 (p \< 0.001)**\
+    Esto sugiere que el modelo en su conjunto es estadísticamente significativo
+
+```{r}
+modelo_logistico <- glm(
+  bajo_peso ~ edad_madre + peso_madre + fuma + hipertension + irritabilidad_utero + raza + visitas_medicas + partos_prematuros,
+  data = datos,
+  family = binomial
+)
+
+```
+
+```{r}
+summary(modelo_logistico)
+
+```
+
+Se aplicó la prueba de **Shapiro-Wilk** sobre los residuos del modelo de regresión lineal para verificar el supuesto de normalidad.\
+**Resultado:**
+
+-    W = 0.99506
+
+-    p-value = 0.7919
+
+Dado que el valor p \> 0.05, no se rechaza la hipótesis de normalidad, lo que indica que los residuos siguen una distribución aproximadamente normal. Por tanto, se cumple uno de los supuestos clave del modelo de regresión lineal.
+
+# **SEGUNDO EJEMPLO** 
+
+**Modelo logístico reducido**
+
+```{r}
+modelo_logistico_2 <- glm(
+  bajo_peso ~ peso_madre + fuma + hipertension + raza,
+  data = datos,
+  family = binomial
+)
+summary(modelo_logistico_2)
+
+```
+
+**Comparar con el modelo anterior usando AIC o anidación**
+
+```{r}
+AIC(modelo_logistico, modelo_logistico_2)
+
+```
+
+PRUEBAS DE BONDAD DE AJUSTE \
+
+```{r}
+install.packages("ResourceSelection")  # solo si no está instalado
+library(ResourceSelection)
+
+hoslem.test(modelo_logistico_2$y, fitted(modelo_logistico_2))
+
+```
+
+El p-valor es mayor a 0.05, lo que indica que no hay evidencia significativa para rechazar la hipótesis nula de que el modelo se ajusta bien a los datos. En otras palabras, el modelo logístico reducido tiene un buen ajuste según esta prueba.
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).

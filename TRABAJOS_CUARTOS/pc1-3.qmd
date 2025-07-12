@@ -1,0 +1,388 @@
+---
+title: "Practica3-3"
+format: html
+editor: visual
+---
+
+Integrantes \
+1. Canchari Gutierrez Marcela Mabel
+
+2.  Donayre Castillo Mateo Jesus
+3.  Enciso Ccorahua Caleb Rudy
+4.  Marroquin Diana
+5.  Serrano Maricielo
+6.  Leyhuacc Cabrera
+7.  Bravo Zapata Maria Fernanda
+
+PROCEDIMIENTO PARA RESUMIR DATOS
+
+```{r}
+install.packages("gtsummary")
+install.packages("finalfit")
+install.packages("flextable")
+```
+
+```{r}
+library(tidyverse)
+library(here)
+library(rio)
+library(gtsummary)
+library(finalfit)
+library(flextable)
+```
+
+```{r}
+bajo_peso <- read.csv("D:/Documents/Desktop/upsjb_practicaestudio/PRACTICA_CALIFICADA/practica_calificada1-2/Dataset_para_los_estudiantes/bajo_peso.csv", encoding = "UTF-8")
+
+```
+
+```{r}
+library(janitor)  # Load the janitor package
+
+bajo_peso = bajo_peso %>%
+  clean_names() %>%
+  mutate_if(is.character, list(~ na_if(., ""))) %>%
+  remove_empty(which = c("rows", "cols"))
+```
+
+```{r}
+str(bajo_peso)
+```
+
+TABLA 01
+
+```{r}
+library(tidyverse)
+bajo_peso <- read_csv("D:/Documents/Desktop/upsjb_practicaestudio/PRACTICA_CALIFICADA/practica_calificada1-2/Dataset_para_los_estudiantes/bajo_peso.csv")
+```
+
+```{r}
+getwd()
+```
+
+```{r}
+bajo_peso <- bajo_peso %>%
+  rename_with(~str_replace_all(tolower(.), "\\s+", "_")) %>%  # Nombres en minúscula y _ en vez de espacio
+  select(where(~!all(is.na(.)))) %>%  # Eliminar columnas vacías
+  filter(if_any(everything(), ~ !is.na(.)))  # Eliminar filas vacías
+vars_categoricas <- c("bajo_peso", "edad_madre", "peso_madre", "raza", "fuma", 
+                      "partos_prematuros", "hipertension", "irritabilidad_utero", 
+                      "visitas_medicas", "peso_nacer")
+
+hacer_tabla <- function(var) {
+  bajo_peso %>%
+    count(!!sym(var)) %>%
+    mutate(porcentaje = round((n / sum(n)) * 100, 1)) %>%
+    rename(valor = !!sym(var))
+}
+
+tablas <- lapply(vars_categoricas, hacer_tabla)
+
+names(tablas) <- vars_categoricas
+
+# Ver por ejemplo la tabla de bajo_peso
+tablas$bajo_peso
+
+```
+
+```{r}
+# Usar summary para obtener un resumen básico
+summary(bajo_peso)
+
+# Usar el paquete psych para un resumen más detallado
+install.packages("psych")
+library(psych)
+describe(datos)
+
+```
+
+```{r}
+# Crear tablas de frecuencia para las variables categóricas
+table(bajo_peso$raza)
+table(bajo_peso$fuma)
+table(bajo_peso$partos_prematuros)
+
+```
+
+```{r}
+# Obtener el mínimo de una variable (ejemplo: peso_madre)
+min(bajo_peso$peso_madre)
+
+# Obtener el máximo de una variable (ejemplo: peso_madre)
+max(bajo_peso$peso_madre)
+
+# Obtener la mediana de una variable (ejemplo: edad_madre)
+median(bajo_peso$edad_madre)
+
+# Obtener los cuartiles de una variable (ejemplo: peso_madre)
+quantile(bajo_peso$peso_madre)
+
+```
+
+```{r}
+# Definir las columnas de variables continuas
+variables_continuas <- c("edad_madre", "peso_madre", "peso_nacer")  # Agrega aquí tus variables continuas
+
+# Función para obtener min, max, mediana y cuartiles
+resumen_continuas <- data.frame(
+  Variable = variables_continuas,
+  Minimo = sapply(bajo_peso[variables_continuas], min, na.rm = TRUE),
+  Maximo = sapply(bajo_peso[variables_continuas], max, na.rm = TRUE),
+  Mediana = sapply(bajo_peso[variables_continuas], median, na.rm = TRUE),
+  Q1 = sapply(bajo_peso[variables_continuas], function(x) quantile(x, probs = 0.25, na.rm = TRUE)),
+  Q3 = sapply(bajo_peso[variables_continuas], function(x) quantile(x, probs = 0.75, na.rm = TRUE))
+)
+
+# Ver el resumen
+print(resumen_continuas)
+
+```
+
+```{r}
+# Definir las columnas de variables continuas
+variables_continuas <- c("edad_madre", "peso_madre", "peso_nacer", "visitas_medicas")  # Agrega más variables según sea necesario
+
+# Función para obtener min, max, mediana y cuartiles
+resumen_continuas <- data.frame(
+  Variable = variables_continuas,
+  Minimo = sapply(bajo_peso[variables_continuas], min, na.rm = TRUE),
+  Maximo = sapply(bajo_peso[variables_continuas], max, na.rm = TRUE),
+  Mediana = sapply(bajo_peso[variables_continuas], median, na.rm = TRUE),
+  Q1 = sapply(bajo_peso[variables_continuas], function(x) quantile(x, probs = 0.25, na.rm = TRUE)),
+  Q3 = sapply(bajo_peso[variables_continuas], function(x) quantile(x, probs = 0.75, na.rm = TRUE))
+)
+
+# Ver el resumen
+print(resumen_continuas)
+
+```
+
+```{r}
+# Cargar la librería
+library(dplyr)
+
+# Leer los datos
+datos <- read.csv("bajo_peso.csv")
+
+# Agrupar los datos (ejemplo de agrupación por 'raza' y 'fuma')
+datos_agrupados <- datos %>%
+  group_by(raza, fuma) %>%
+  summarise(
+    cantidad = n(),
+    promedio_edad_madre = mean(edad_madre, na.rm = TRUE),
+    promedio_peso_madre = mean(peso_madre, na.rm = TRUE),
+    promedio_peso_nacer = mean(peso_nacer, na.rm = TRUE)
+  )
+  
+# Ver resultado
+print(datos_agrupados)
+```
+
+```{r}
+getwd()  # Esto te muestra la ruta del directorio de trabajo actual
+
+```
+
+```{r}
+setwd("D:/Documents/Desktop/upsjb_practicaestudio/PRACTICA_CALIFICADA/practica_calificada1-2/Dataset_para_los_estudiantes/")
+
+```
+
+```{r}
+# Cargar librerías necesarias
+library(dplyr)
+library(readr)
+
+# Leer tu archivo
+bajo_peso <- read_csv("bajo_peso.csv")
+
+# Calcular máximos y promedios de peso_nacer y peso_madre
+bajo_peso |> 
+  summarize(
+    max_peso_nacer = max(peso_nacer, na.rm = TRUE),
+    max_peso_madre = max(peso_madre, na.rm = TRUE),
+    prom_peso_nacer = mean(peso_nacer, na.rm = TRUE),
+    prom_peso_madre = mean(peso_madre, na.rm = TRUE)
+  )
+```
+
+```{r}
+# Verifica los nombres de las columnas de bajo_peso
+colnames(bajo_peso)
+
+```
+
+```{r}
+# Cargar librerías necesarias
+library(dplyr)
+library(readr)
+
+# Leer tu archivo
+bajo_peso <- read_csv("bajo_peso.csv")
+
+# Calcular percentiles de peso_nacer y peso_madre
+bajo_peso |> 
+  summarize(
+    p25_peso_nacer = quantile(peso_nacer, probs = 0.25, na.rm = TRUE),
+    p50_peso_nacer = quantile(peso_nacer, probs = 0.50, na.rm = TRUE),
+    p75_peso_nacer = quantile(peso_nacer, probs = 0.75, na.rm = TRUE),
+    p25_peso_madre = quantile(peso_madre, probs = 0.25, na.rm = TRUE),
+    p50_peso_madre = quantile(peso_madre, probs = 0.50, na.rm = TRUE),
+    p75_peso_madre = quantile(peso_madre, probs = 0.75, na.rm = TRUE)
+  )
+```
+
+```{r}
+# Cargar librerías necesarias
+library(dplyr)
+library(readr)
+
+# Leer tu archivo
+bajo_peso <- read_csv("bajo_peso.csv")
+
+# Calcular múltiples estadísticos descriptivos para múltiples variables
+bajo_peso |> 
+  summarize(
+    across(
+      c(peso_nacer, peso_madre),
+      list(
+        media = ~mean(.x, na.rm = TRUE),
+        mediana = ~median(.x, na.rm = TRUE),
+        minimo = ~min(.x, na.rm = TRUE),
+        maximo = ~max(.x, na.rm = TRUE),
+        desviacion = ~sd(.x, na.rm = TRUE)
+      )
+    )
+  )
+```
+
+# **TABLA 01**
+
+```{r}
+# Cargar librerías
+library(gtsummary)
+library(readr)
+library(dplyr)
+
+# Leer el dataset
+datos <- read_csv("bajo_peso.csv")
+
+# Crear la Tabla 1
+tabla1 <- datos %>%
+  select(
+    bajo_peso,
+    edad_madre,
+    peso_madre,
+    raza,
+    fuma,
+    partos_prematuros,
+    hipertension,
+    irritabilidad_utero,
+    visitas_medicas,
+    peso_nacer
+  ) %>%
+  tbl_summary(
+    by = bajo_peso, # El grupo será bajo_peso
+    statistic = list(
+      all_continuous() ~ "{mean} ({sd})", # Para variables numéricas: media (desviación estándar)
+      all_categorical() ~ "{n} ({p}%)"    # Para variables categóricas: número (porcentaje)
+    ),
+    digits = all_continuous() ~ 1,
+    missing = "no"
+  ) %>%
+  add_p() %>%
+  bold_labels()
+
+# Mostrar la tabla
+tabla11
+```
+
+# 
+
+```{r}
+# Cargar librerías
+library(gtsummary)
+library(readr)
+library(dplyr)
+
+# Configurar tema y lenguaje
+theme_gtsummary_language("es")      # Cambia a español
+theme_gtsummary_journal("jama")      # Estilo tipo journal (puedes cambiar "jama" por otro si quieres)
+
+# Leer los datos
+datos <- read_csv("bajo_peso.csv")
+
+# Crear la Tabla 1
+tabla1 <- datos %>%
+  select(
+    bajo_peso,
+    edad_madre,
+    peso_madre,
+    raza,
+    fuma,
+    partos_prematuros,
+    hipertension,
+    irritabilidad_utero,
+    visitas_medicas,
+    peso_nacer
+  ) %>%
+  tbl_summary(
+    by = bajo_peso, # Grupo: bajo_peso
+    statistic = list(
+      all_continuous() ~ "{median} ({p25}, {p75})", # Mediana (p25, p75) para continuas
+      all_categorical() ~ "{n} ({p}%)"              # n (%) para categóricas
+    ),
+    digits = all_continuous() ~ 1,
+    label = list(
+      edad_madre ~ "Edad de la Madre",
+      peso_madre ~ "Peso de la Madre",
+      raza ~ "Raza",
+      fuma ~ "Fuma",
+      partos_prematuros ~ "Partos Prematuros",
+      hipertension ~ "Hipertensión",
+      irritabilidad_utero ~ "Irritabilidad Uterina",
+      visitas_medicas ~ "Visitas Médicas",
+      peso_nacer ~ "Peso al Nacer"
+    ),
+    missing = "no" # No mostrar NA
+  ) %>%
+  add_p() %>%
+  bold_labels()
+
+# Mostrar la tabla
+tabla1
+```
+
+```{r}
+# Recodificar variables
+datos_recodificado <- datos %>%
+  mutate(
+    bajo_peso = factor(bajo_peso, levels = c(0, 1), labels = c("No", "Sí")),
+    fuma = factor(fuma, levels = c(0, 1), labels = c("No", "Sí")),
+    partos_prematuros = factor(partos_prematuros, levels = c(0, 1), labels = c("No", "Sí")),
+    hipertension = factor(hipertension, levels = c(0, 1), labels = c("No", "Sí")),
+    irritabilidad_utero = factor(irritabilidad_utero, levels = c(0, 1), labels = c("No", "Sí")),
+    raza = factor(raza) #  Agregar esto para que raza sea un factor
+  )
+```
+
+##  Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).

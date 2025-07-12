@@ -1,0 +1,146 @@
+---
+title: "Análisis de Conglomerados en Gestantes"
+author: gRUPO 4
+date: "2025-07-10"
+format:  html
+editor: visual
+---
+
+# INTEGRANTES
+
+-   Canchari Gutierrez Marcela Mabel
+
+-   Serrano Ccahuay Maricielo
+
+-   Donayre Castillo Mateo Jesus
+
+-   Enciso Ccorahua Caleb
+
+-   Bravo zapata maria fernanda
+
+-   Leyhuacc cabrera Ander
+
+-   Marroquin Quispe Diana
+
+    # Carga de librerías y datos
+
+```{r}
+library(tidyverse)
+library(cluster)
+library(factoextra)
+library(readr)
+
+# Cargar el dataset
+#CARGAR LOS DATOS
+setwd("D:/Documents/Desktop/PRACTICA_CALIFICADA1-2/Dataset_para_los_estudiantes")
+# Vista general
+glimpse(bajo_peso)
+summary(bajo_peso)
+# Selección de variables para el clustering
+bajo_peso_clustering <- bajo_peso %>%
+  select(edad_madre, peso_madre, visitas_medicas, partos_prematuros) %>%
+  drop_na()
+# Escalamiento de las variables seleccionadas
+bajo_peso_scaled <- scale(bajo_peso_clustering)
+# Aplicar k-means clustering
+set.seed(123)
+k <- 3
+km_res <- kmeans(bajo_peso_scaled, centers = k, nstart = 25)
+
+# Asignar los clústeres al dataset original filtrado
+bajo_peso_clustered <- bajo_peso %>%
+  filter(complete.cases(select(., edad_madre, peso_madre, visitas_medicas, partos_prematuros))) %>%
+  mutate(cluster = factor(km_res$cluster))
+
+
+```
+
+# Pre-procesamiento de los datos
+
+Seleccionamos variables numéricas relevantes para el análisis: edad, peso de la madre, número de visitas médicas y número de partos prematuros. También convertimos variables categóricas como el tabaquismo en variables numéricas si se desea incluirlas.
+
+```{r}
+# Ver resumen por clúster
+bajo_peso_clustered %>%
+  group_by(cluster) %>%
+  summarise(
+    edad_madre = mean(edad_madre, na.rm = TRUE),
+    peso_madre = mean(peso_madre, na.rm = TRUE),
+    visitas_medicas = mean(visitas_medicas, na.rm = TRUE),
+    partos_prematuros = mean(partos_prematuros, na.rm = TRUE),
+    n = n()
+  )
+
+
+```
+
+# Determinación del número óptimo de clústeres
+
+Utilizamos el método del **codo** (elbow method) y el método de la **silhouette** para identificar el número ideal de clústeres.
+
+```{r}
+# Método del codo
+fviz_nbclust(bajo_peso_scaled, kmeans, method = "wss") +
+  labs(title = "Número óptimo de clústeres - Método del Codo")
+
+# Método silhouette
+fviz_nbclust(bajo_peso_scaled, kmeans, method = "silhouette") +
+  labs(title = "Número óptimo de clústeres - Silhouette")
+```
+
+# Aplicación del algoritmo k-means
+
+Se procede con el número óptimo de clústeres definido (por ejemplo, k = 3).
+
+```{r}
+set.seed(123)
+k <- 3
+km_res <- kmeans(bajo_peso_scaled, centers = k, nstart = 25)
+
+# Agregar clústeres al dataset original
+bajo_peso_clustered <- bajo_peso %>%
+  filter(complete.cases(bajo_peso_clustering)) %>%
+  mutate(cluster = factor(km_res$cluster))
+```
+
+# Visualización de los clústeres
+
+```{r}
+fviz_cluster(km_res, data = bajo_peso_scaled,
+             ellipse.type = "norm",
+             palette = "jco",
+             ggtheme = theme_minimal())
+```
+
+# Interpretación de los resultados
+
+Se identificaron tres conglomerados de gestantes según sus características clínicas. La interpretación de estos grupos se puede realizar analizando los promedios de cada variable dentro de cada clúster:
+
+```{r}
+bajo_peso_clustered %>%
+  group_by(cluster) %>%
+  summarise(
+    edad_madre = mean(edad_madre, na.rm = TRUE),
+    peso_madre = mean(peso_madre, na.rm = TRUE),
+    visitas_medicas = mean(visitas_medicas, na.rm = TRUE),
+    partos_prematuros = mean(partos_prematuros, na.rm = TRUE),
+    n = n()
+  )
+
+```
+
+Los clústeres muestran diferencias claras entre las gestantes con mayor o menor número de partos prematuros, visitas médicas o variaciones en el peso materno. Estos patrones pueden servir para diseñar intervenciones más específicas.
+
+# Conclusiones
+
+El análisis de conglomerados permitió identificar subgrupos homogéneos de gestantes en función de variables clínicas clave. Este tipo de análisis puede ser útil para segmentar a las pacientes y personalizar medidas de prevención para el bajo peso neonatal.
+
+Se recomienda integrar más variables (como tabaquismo, hipertensión, raza) y considerar métodos como clustering jerárquico o DBSCAN para explorar diferentes estructuras en los datos.
+
+```{r}
+fviz_cluster(km_res, data = bajo_peso_scaled,
+             ellipse.type = "norm",
+             palette = "jco",
+             ggtheme = theme_minimal())
+
+```

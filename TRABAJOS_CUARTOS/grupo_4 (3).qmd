@@ -1,0 +1,255 @@
+---
+title: "PracticaCalificada_01"
+author: "Grupo 4"
+format: html
+editor: visual
+---
+
+ENCISO CCORAHUA CALEB RUDY
+
+BRAVO ZAPATA MARIA FERNANDA
+
+DONAYRE CASTILLO MATEO
+
+CANCHARI GUTIERREZ MARCELA MABEL
+
+MARROQUIN QUISPE DIANA
+
+ANDERSON JOSUE LEYHUACC CABRERA
+
+MARICIELO SERRANO CCAHUAY
+
+FUNCION 01:
+
+"Mi_promedio_San juan"
+
+La función notas_sanjuan se implementó como una herramienta sencilla y práctica para calcular el promedio simple de las notas obtenidas en un curso. Generalmente, los cursos universitarios brindan tres calificaciones principales, que provienen de exámenes, actividades y otros trabajos evaluados, por lo que esta función está pensada para adaptarse fácilmente a ese esquema común.
+
+Finalmente, esta función representa un primer paso importante para calcular el promedio ponderado del curso, ya que al obtener de forma clara el promedio de las notas parciales, se puede luego aplicar los pasos correspondientes según el criterio de la calificacion
+
+```{r}
+promedio_sanjuan <- function(mis_notas) {
+  promedio <- mean(notas)
+  return(promedio)
+}
+# mis_notas <- c(14, 15, 12, 11, 16)
+# promedio_sanjuan (mis_notas)
+# return(promedio)
+```
+
+```{r}
+mis_notas <- c(14, 16, 15, 17)
+notas_sanjuan(mis_notas)
+```
+
+```{r}
+# Definimos la función que calcula el promedio de tus notas
+notas_sanjuan <- function(notas) {
+  promedio <- mean(notas)
+  return(promedio)
+}
+# Creamos un vector con tus notas
+mis_notas <- c(14, 16, 15, 17)
+
+# Llamamos a la función
+notas_sanjuan(mis_notas)
+```
+
+FUNCION 02:
+
+La función promedio_ponderado fue implementada con el objetivo de calcular de manera precisa el promedio final de un curso, considerando los diferentes pesos o porcentajes asignados a cada calificación. A diferencia del promedio simple, esta función permite reflejar la realidad del sistema de evaluación, donde no todas las notas tienen el mismo valor.
+
+```{r}
+# Función para calcular el promedio ponderado
+promedio_ponderado <- function(notas, pesos) {
+  resultado <- sum(notas * pesos) / sum(pesos)
+  return(resultado)
+}
+mis_notas <- c(12, 14, 13, 11, 13, 16)
+mis_pesos <- c(0.15, 0.15, 0.15, 0.15, 0.20, 0.20)
+
+promedio_ponderado(mis_notas, mis_pesos)
+```
+
+FUNCION 03:
+
+La función clasificar_glucosa fue implementada con el objetivo de identificar y clasificar el nivel de glucosa en sangre de distintos pacientes. Esta función permite diferenciar entre valores normales y elevados, facilitando así una evaluación preliminar del riesgo de hiperglucemia o diabetes. Es especialmente útil en contextos clínicos y académicos donde se requiere una revisión rápida del estado glucémico de varios individuos.
+
+```{r}
+# Crear un dataframe con 15 pacientes y sus niveles de glucosa (mg/dL)
+pacientes <- data.frame(
+  nombre = paste("Paciente", 1:15),
+  glucosa = c(90, 110, 130, 85, 145, 99, 101, 115, 77, 160, 88, 105, 96, 180, 92))
+```
+
+```{r}
+clasificar_glucosa <- function(valor) {
+  if (valor < 100) {
+    return("Normal")
+  } else if (valor >= 100 & valor < 126) {
+    return("Alterada en ayunas")
+  } else {
+    return("Elevada (sospecha de diabetes)")
+  }
+}
+```
+
+```{r}
+# Crear una nueva columna con la clasificación
+pacientes$clasificacion <- sapply(pacientes$glucosa, clasificar_glucosa)
+
+# Ver el resultado
+print(pacientes)
+```
+
+FUNCION 04:
+
+La función tiempo_en_pantalla fue creada con el objetivo de estimar el tiempo total que un estudiante de medicina pasa frente a una pantalla durante la semana con fines de estudio. Considera la cantidad de horas diarias dedicadas al estudio digital, permitiendo visualizar el esfuerzo académico invertido y fomentar una gestión saludable del tiempo.
+
+```{r}
+tiempo_en_pantalla <- function(horas_por_dia) {
+  # Verificar que haya 7 valores (uno por cada día de la semana)
+  if (length(horas_por_dia) != 7) {
+    stop("Debes ingresar 7 valores, uno por cada día de la semana (de lunes a domingo).")
+  }
+  
+  dias <- c("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
+  total_horas <- sum(horas_por_dia)
+  
+  # Crear un resumen en data frame
+  resumen <- data.frame(
+    Día = dias,
+    Horas = horas_por_dia
+  )
+  
+  cat("Resumen del tiempo frente a pantalla:\n")
+  print(resumen)
+  cat("\nTotal semanal: ", total_horas, "horas estudiando frente a una pantalla \n")
+  
+  return(total_horas)
+}
+```
+
+```{r}
+# Supongamos que estudias así:
+horas_estudio <- c(6, 5, 6, 4, 3, 2, 1)  # De lunes a domingo
+tiempo_en_pantalla(horas_estudio)
+```
+
+FUNCION 05:
+
+La función planificador_tareas fue desarrollada para ayudar a estudiantes a organizar de manera eficiente sus tareas diarias, permitiendo planificar actividades como clases, horas de estudio, descansos y otras responsabilidades. Esta función facilita la creación de un cronograma personalizado para mejorar la productividad y el manejo del tiempo.
+
+```{r}
+planificador_tareas <- function(dias, tareas, horas) {
+  if (length(dias) != length(tareas) | length(dias) != length(horas)) {
+    stop("Las listas de días, tareas y horas deben tener la misma longitud.")
+  }
+  
+  plan <- data.frame(
+    Día = dias,
+    Tarea = tareas,
+    Horas_Asignadas = horas
+  )
+  
+  cat("📅 Tu planificación de tareas:\n")
+  print(plan)
+  
+  total_horas <- sum(horas)
+  cat("\n⏳ Total de horas planificadas en la semana:", total_horas, "horas\n")
+  
+  return(plan)
+}
+```
+
+```{r}
+dias <- c("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
+tareas <- c("Clases", "Estudio", "Práctica clínica", "Estudio", "Repaso", "Descanso", "Organizar semana")
+horas <- c(4, 5, 6, 4, 3, 2, 1)
+
+planificador_tareas(dias, tareas, horas)
+
+```
+
+INSTALACIÓN DE PAQUETES
+
+PAQUETE NUMERO 1:
+
+El paquete ggplot2 sirve para crear gráficos bonitos y personalizados de forma sencilla y potente en R. Es uno de los paquetes más usados en visualización de datos y se basa en la “Gramática de los Gráficos” (de ahí su nombre: ggplot).
+
+```{r}
+install.packages("ggplot2")
+```
+
+```{r}
+# Datos de ejemplo
+notas <- data.frame(
+  estudiante = c("Ana", "Luis", "Sofía", "Carlos", "Valeria"),
+  calificacion = c(85, 92, 78, 88, 95)
+)
+# Carga la librería
+library(ggplot2)
+# Crear gráfico de barras
+ggplot(notas, aes(x = estudiante, y = calificacion, fill = estudiante)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Calificaciones de los estudiantes",
+       x = "Estudiante",
+       y = "Calificación") +
+  theme_minimal()
+```
+
+PAQUETE NUMERO 2:
+
+```{r}
+install.packages("stringr")
+```
+
+```{r}
+library(stringr)
+```
+
+```{r}
+nombre <- "maria fernanda"
+str_to_upper(nombre)  # "MARIA FERNANDA"
+
+apellido <- "LOPEZ"
+str_to_lower(apellido)  # "lopez"
+```
+
+```{r}
+str_length("Hola crack")  # 10
+```
+
+```{r}
+frase <- "Estoy estudiando medicina"
+str_detect(frase, "medicina")  # TRUE
+str_detect(frase, "ingeniería")  # FALSE
+```
+
+PAQUETE 03:
+
+```{r}
+install.packages("lubridate")
+
+```
+
+```{r}
+library(lubridate)
+```
+
+```{r}
+inicio <- ymd_hms("2025-04-15 08:00:00")
+fin <- ymd_hms("2025-04-15 11:30:00")
+```
+
+```{r}
+tiempo_estudio <- fin - inicio
+tiempo_estudio  # Time difference of 3.5 hours
+```
+
+```{r}
+nueva_sesion <- inicio + hours(2)
+nueva_sesion  # "2025-04-15 10:00:00"
+```
+
+## QUARTO

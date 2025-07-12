@@ -1,0 +1,178 @@
+---
+title: "Practica calificada 3 - 2"
+format: html
+editor: visual
+---
+
+ALUMNOS - **GRUPO 4**\
+- Donayre Castillo Mateo Jesus
+
+\- Serrano Ccahuay Maricielo
+
+\- Canchari Gutierrez Marcela
+
+\- Marroquin Quispe Diana Carolina
+
+\- Bravo Zapata Maria Fernanda
+
+\- Enciso ccorahua Caleb Rudy
+
+\- Leyhuacc Cabrera Ander
+
+### 1. **Carga y exploración inicial de los datos**
+
+```{r}
+#CARGAR LOS DATOS
+datos <- read.csv("D:/Documents/Desktop/PRACTICA_CALIFICADA1-2/Dataset_para_los_estudiantes/bajo_peso_limpio.csv")
+
+```
+
+CARGAR PAQUETES\
+
+```{r}
+# Ver las primeras filas
+head(datos)
+
+# Ver estructura
+str(datos)
+
+# Verificar si hay datos faltantes
+summary(datos)
+```
+
+**convertir las variables categóricas a factores**
+
+```{r}
+datos$bajo_peso <- factor(datos$bajo_peso, levels = c("No", "Sí"))
+datos$fuma <- factor(datos$fuma)
+datos$hipertension <- factor(datos$hipertension)
+datos$irritabilidad_utero <- factor(datos$irritabilidad_utero)
+datos$raza <- factor(datos$raza)
+
+```
+
+**Aplicación del modelo de regresión logística**
+
+Se utiliza regresión logística para evaluar cómo el peso de la madre, el tabaquismo, la hipertensión y la raza se asocian con la probabilidad de bajo peso al nacer.
+
+```{r}
+modelo_logit <- glm(bajo_peso ~ peso_madre + fuma + hipertension + raza, 
+                    data = datos, family = binomial)
+summary(modelo_logit)
+
+```
+
+**b. Interpretación de los resultados del modelo de regresión logística**
+
+El modelo de regresión logística binaria tiene como objetivo estimar la probabilidad de que una madre tenga un recién nacido con bajo peso al nacer (variable bajo_peso: “Sí” o “No”), en función de factores maternos como el peso, el tabaquismo, la hipertensión y la raza.
+
+A continuación se interpreta cada componente relevante:
+
+##### Significancia de las variables (p-valores)
+
+Los p-valores indican si la relación entre cada variable independiente y la variable dependiente (bajo peso) es estadísticamente significativa:
+
+-   peso_madre (p = 0.008): significativo. A mayor peso de la madre, menor es el riesgo de bajo peso.
+
+-   fuma Sí (p = 0.005): significativo. Fumar durante el embarazo aumenta significativamente el riesgo de bajo peso
+
+-   hipertensionSí (p = 0.011): significativo. Tener hipertensión durante el embarazo se asocia con un mayor riesgo
+
+-   razaBlanca (p = 0.014): significativo. Las madres blancas tienen menos probabilidad de tener un bebé con bajo peso en comparación con el grupo de referencia (Afroamericanas)
+
+-   razaOtra (p = 0.521): no significativo. No se observa diferencia estadísticamente relevante con respecto al grupo de referencia.
+
+Las variables con p \< 0.05 se consideran significativas, lo que indica que probablemente sí tienen un efecto real sobre la probabilidad de bajo peso al nacer.
+
+**Dirección del efecto (signo del coeficiente)**
+
+-   Coeficientes negativos (por ejemplo, peso_madre y razaBlanca) indican que estas variables están asociadas con una menor probabilidad de bajo peso.
+
+<!-- -->
+
+-   Coeficientes positivos (como fumaSí y hipertensionSí) indican que aumentan el riesgo de bajo peso.
+
+**Magnitud del efecto (odds ratio)**
+
+![](images/clipboard-978761174.png)
+
+# **EJEMPLO 2**
+
+**Objetivo del análisis alternativo**
+
+Explorar si el número de visitas médicas durante el embarazo, la presencia de irritabilidad uterina y antecedentes de partos prematuros están asociados con la probabilidad de tener un recién nacido con bajo peso.
+
+```{r}
+#CARGAR LOS DATOS
+datos <- read.csv("D:/Documents/Desktop/PRACTICA_CALIFICADA1-2/Dataset_para_los_estudiantes/bajo_peso_limpio.csv")
+```
+
+```{r}
+datos$bajo_peso <- ifelse(datos$bajo_peso == "Sí", 1, 0)
+
+
+```
+
+```{r}
+datos$irritabilidad_utero <- factor(datos$irritabilidad_utero)
+
+```
+
+**Ajustar el modelo de regresión logística**
+
+```{r}
+modelo <- glm(bajo_peso ~ visitas_medicas + irritabilidad_utero + partos_prematuros, 
+              data = datos, 
+              family = binomial)
+
+summary(modelo)
+
+```
+
+Para interpretar los efectos en términos de riesgo:
+
+```{r}
+exp(coef(modelo))
+
+```
+
+b\. Documentación de la interpretación de los resultados del modelo
+
+Se aplicó un modelo de regresión logística binaria con la variable dependiente bajo_peso (1 = Sí, 0 = No), y como variables predictoras:
+
+-   visitas_medicas: número de controles prenatales
+
+-   irritabilidad_utero: presencia o no de irritabilidad uterina
+
+-   partos_prematuros: número de partos prematuros anteriores
+
+![](images/clipboard-651673695.png)
+
+**Conclusión**:
+
+-   El número de partos prematuros se asocia significativamente con un aumento en el riesgo de bajo peso neonatal.
+
+-   La irritabilidad uterina tiene un efecto positivo pero marginalmente significativo.
+
+-   Las visitas médicas no mostraron un efecto significativo en este modelo, lo cual podría deberse a la distribución o variabilidad de esa variable en esta muestra
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
